@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+<!--导入配置jedis的链接文件-->
+    <context:property-placeholder location="classpath:redis.properties" />
+<!--把jedis对象交给spring管理-->
+    <!--参数一-->
+    <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig"></bean>
+ <bean id="shardedJedisPool" class="redis.clients.jedis.ShardedJedisPool">
+    <!--源码查看这个对象没有无参数构造方法，所以我们要给它通过有参构造创建实例对象-->
+    <constructor-arg index="0" ref="jedisPoolConfig"></constructor-arg>
+     <constructor-arg index="1">
+         <list>
+            <bean class="redis.clients.jedis.JedisShardInfo">
+                <constructor-arg value="${redis.host}" name="host"/>
+
+                <constructor-arg value="${redis.port}" name="port"/>
+
+                <constructor-arg value="${redis.timeout}" name="timeout"/>
+            </bean>
+         </list>
+     </constructor-arg>
+
+</bean>
+
+
+
+ </beans>
